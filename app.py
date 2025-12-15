@@ -11,7 +11,6 @@ st.set_page_config(
 )
 
 # --- CSS TO HIDE STREAMLIT UI ELEMENTS ---
-# This ensures the focus remains solely on the image as requested
 hide_streamlit_style = """
             <style>
             #MainMenu {visibility: hidden;}
@@ -38,8 +37,30 @@ def generate_interactive_map(image_path, csv_path):
     # 1. Load Data
     try:
         df = pd.read_csv(csv_path)
+        # --- FIX: CLEAN COLUMN NAMES ---
+        # This converts all headers to lowercase and removes empty spaces
+        # e.g., " Coordinates " becomes "coordinates"
+        df.columns = df.columns.str.strip().str.lower()
     except FileNotFoundError:
         return "<h3 style='color:white; text-align:center'>Error: spaces.csv not found.</h3>"
+    except Exception as e:
+        return f"<h3 style='color:white; text-align:center'>Error reading CSV: {e}</h3>"
+
+    # --- DIAGNOSTIC CHECK ---
+    required_cols = ['coordinates', 'link_url', 'name', 'description', 'image_url']
+    missing_cols = [c for c in required_cols if c not in df.columns]
+    
+    if missing_cols:
+        # If columns are missing, show a helpful error on screen
+        error_msg = f"""
+        <div style='background: darkred; color: white; padding: 20px;'>
+            <h3>CSV Error</h3>
+            <p>Your CSV file is missing these required columns: <b>{missing_cols}</b></p>
+            <p>Your current columns are: <b>{list(df.columns)}</b></p>
+            <p>Please check the first row of your spaces.csv file.</p>
+        </div>
+        """
+        return error_msg
 
     # 2. Encode Background Image
     if os.path.exists(image_path):
@@ -49,27 +70,24 @@ def generate_interactive_map(image_path, csv_path):
         return "<h3 style='color:white; text-align:center'>Error: Image file not found.</h3>"
 
     # 3. Generate SVG Polygons
-    # We use an SVG overlay on top of the image. 
-    # The viewBox should match the original image dimensions (or aspect ratio).
-    # Assuming the image is roughly 1000x667 based on aspect ratio, but viewBox allows scaling.
-    # Note: When mapping coordinates, ensure they match the coordinate system used here.
-    # Standard practice: Use the original image width/height for the viewBox.
-    
-    # Let's assume a standard coordinate base (e.g., 1024 width) for the viewBox.
-    # You must map your coordinates relative to the image's original size.
-    svg_width = 1600  # Adjust this to match the width of image1.jpg
-    svg_height = 1066 # Adjust this to match the height of image1.jpg
+    # Adjust these numbers if your coordinate tool used a different scale
+    svg_width = 1600 
+    svg_height = 1066
 
     polygons_html = ""
     
     for index, row in df.iterrows():
-        coords = row['coordinates']
-        link = row['link_url']
-        name = row['name']
-        desc = row['description']
-        img_preview = row['image_url']
+        # Using .get() ensures it doesn't crash if a cell is empty
+        coords = str(row.get('coordinates', ''))
+        link = str(row.get('link_url', '#'))
+        name = str(row.get('name', ''))
+        desc = str(row.get('description', ''))
+        img_preview = str(row.get('image_url', ''))
         
-        # We create a group for each zone containing the link and polygon
+        # Escape quotes in strings to prevent HTML breakage
+        name = name.replace("'", "&#39;")
+        desc = desc.replace("'", "&#39;")
+        
         polygons_html += f"""
         <a href="{link}" target="_blank">
             <polygon class="map-poly" points="{coords}" 
@@ -86,45 +104,12 @@ def generate_interactive_map(image_path, csv_path):
     <head>
     <style>
         body {{ margin: 0; padding: 0; overflow: hidden; background-color: #000; }}
+        .map-container {{ position: relative; width: 100%; height: auto; }}
+        .map-image {{ width: 100%; display: block; }}
+        .map-svg {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; }}
+        .map-poly {{ fill: transparent; stroke: none; cursor: pointer; transition: all 0.3s ease; }}
+        .map-poly:hover {{ fill: rgba(255, 215, 0, 0.4); stroke: rgba(255, 255, 255, 0.8); stroke-width: 2px; }}
         
-        /* Container for the image and SVG overlay */
-        .map-container {{
-            position: relative;
-            width: 100%;
-            height: auto;
-        }}
-        
-        /* The Background Image */
-        .map-image {{
-            width: 100%;
-            display: block;
-        }}
-        
-        /* The SVG Overlay */
-        .map-svg {{
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }}
-        
-        /* Polygon Styling */
-        .map-poly {{
-            fill: transparent;
-            stroke: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }}
-        
-        /* Hover Effect: Yellow Highlight */
-        .map-poly:hover {{
-            fill: rgba(255, 215, 0, 0.4); /* Gold with transparency */
-            stroke: rgba(255, 255, 255, 0.8);
-            stroke-width: 2px;
-        }}
-
-        /* Tooltip Styling */
         #tooltip {{
             display: none;
             position: fixed;
@@ -134,23 +119,14 @@ def generate_interactive_map(image_path, csv_path):
             border-radius: 8px;
             padding: 15px;
             font-family: sans-serif;
-            pointer-events: none; /* Let mouse pass through to polygon */
+            pointer-events: none;
             z-index: 1000;
             width: 250px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }}
-        
-        #tooltip img {{
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 4px;
-            margin-bottom: 8px;
-        }}
-        
+        #tooltip img {{ width: 100%; height: 150px; object-fit: cover; border-radius: 4px; margin-bottom: 8px; }}
         #tooltip h4 {{ margin: 0 0 5px 0; color: #ffbf00; }}
         #tooltip p {{ margin: 0; font-size: 0.9em; color: #ddd; }}
-
     </style>
     </head>
     <body>
@@ -180,19 +156,11 @@ def generate_interactive_map(image_path, csv_path):
             ttDesc.innerText = desc;
             ttImg.src = imgUrl;
             
-            // Calculate Position
-            // We use clientX/Y to position relative to viewport
             var x = evt.clientX;
             var y = evt.clientY;
             
-            // Adjust if tooltip goes off screen
-            if (x + 270 > window.innerWidth) {{
-                x = x - 270;
-            }}
-            
-            if (y + 300 > window.innerHeight) {{
-                y = y - 200;
-            }}
+            if (x + 270 > window.innerWidth) {{ x = x - 270; }}
+            if (y + 300 > window.innerHeight) {{ y = y - 200; }}
 
             tooltip.style.left = (x + 15) + "px";
             tooltip.style.top = (y + 15) + "px";
@@ -208,14 +176,9 @@ def generate_interactive_map(image_path, csv_path):
     return html_code
 
 # --- APP EXECUTION ---
-# 1. Set file paths
 current_dir = os.getcwd()
 img_file = os.path.join(current_dir, "image1.jpg")
 csv_file = os.path.join(current_dir, "spaces.csv")
 
-# 2. Generate HTML
 html_content = generate_interactive_map(img_file, csv_file)
-
-# 3. Render in Streamlit
-# We use height=1000 to ensure enough scroll space, or use scrolling=True
 st.components.v1.html(html_content, height=900, scrolling=False)
