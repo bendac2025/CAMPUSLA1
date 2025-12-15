@@ -10,17 +10,19 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- CSS TO HIDE STREAMLIT UI ELEMENTS ---
+# --- CSS TO HIDE STREAMLIT UI ---
 hide_streamlit_style = """
             <style>
             #MainMenu {visibility: hidden;}
             footer {visibility: hidden;}
             header {visibility: hidden;}
             .block-container {
-                padding-top: 0rem;
-                padding-bottom: 0rem;
-                padding-left: 0rem;
-                padding-right: 0rem;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            /* Remove standard Streamlit padding */
+            div[data-testid="stAppViewContainer"] > .main {
+                padding: 0;
             }
             </style>
             """
@@ -28,18 +30,40 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # --- HELPER FUNCTIONS ---
 def get_base64_of_bin_file(bin_file):
-    """Encodes the local image to base64 so it can be embedded in HTML"""
-    with open(bin_file, 'rb') as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
+    """Encodes a binary file to base64 for embedding in HTML"""
+    try:
+        with open(bin_file, 'rb') as f:
+            data = f.read()
+        return base64.b64encode(data).decode()
+    except Exception:
+        return None
+
+def find_popup_image(image_name):
+    """
+    Looks for an image file based on the 'Actual Site' name.
+    Checks for .jpg, .jpeg, and .png extensions.
+    """
+    if not isinstance(image_name, str):
+        return None
+        
+    # Clean the filename (remove extra spaces)
+    clean_name = image_name.strip()
+    
+    # List of extensions to check
+    extensions = ['.jpg', '.jpeg', '.png']
+    
+    for ext in extensions:
+        file_path = f"{clean_name}{ext}"
+        if os.path.exists(file_path):
+            return file_path
+            
+    return None
 
 def generate_interactive_map(image_path, csv_path):
     # 1. Load Data
     try:
         df = pd.read_csv(csv_path)
-        # --- FIX: CLEAN COLUMN NAMES ---
-        # This converts all headers to lowercase and removes empty spaces
-        # e.g., " Coordinates " becomes "coordinates"
+        # Clean columns: lowercase and remove spaces
         df.columns = df.columns.str.strip().str.lower()
     except FileNotFoundError:
         return "<h3 style='color:white; text-align:center'>Error: spaces.csv not found.</h3>"
@@ -47,51 +71,71 @@ def generate_interactive_map(image_path, csv_path):
         return f"<h3 style='color:white; text-align:center'>Error reading CSV: {e}</h3>"
 
     # --- DIAGNOSTIC CHECK ---
-    required_cols = ['coordinates', 'link_url', 'name', 'description', 'image_url']
+    # We check for the new columns from your file
+    required_cols = ['coordinates', 'link url', 'space', 'actual site']
     missing_cols = [c for c in required_cols if c not in df.columns]
     
     if missing_cols:
-        # If columns are missing, show a helpful error on screen
-        error_msg = f"""
+        return f"""
         <div style='background: darkred; color: white; padding: 20px;'>
             <h3>CSV Error</h3>
-            <p>Your CSV file is missing these required columns: <b>{missing_cols}</b></p>
-            <p>Your current columns are: <b>{list(df.columns)}</b></p>
-            <p>Please check the first row of your spaces.csv file.</p>
+            <p>Missing columns: <b>{missing_cols}</b></p>
+            <p>Found columns: <b>{list(df.columns)}</b></p>
         </div>
         """
-        return error_msg
 
     # 2. Encode Background Image
     if os.path.exists(image_path):
-        img_base64 = get_base64_of_bin_file(image_path)
-        img_src = f"data:image/jpeg;base64,{img_base64}"
+        bg_base64 = get_base64_of_bin_file(image_path)
+        img_src = f"data:image/jpeg;base64,{bg_base64}"
     else:
-        return "<h3 style='color:white; text-align:center'>Error: Image file not found.</h3>"
+        return "<h3 style='color:white; text-align:center'>Error: Background image1.jpg not found.</h3>"
 
     # 3. Generate SVG Polygons
-    # Adjust these numbers if your coordinate tool used a different scale
-    svg_width = 1600 
-    svg_height = 1066
+    # Dimensions matched to your provided image1.jpg (1024x696)
+    svg_width = 1024 
+    svg_height = 696
 
     polygons_html = ""
     
     for index, row in df.iterrows():
-        # Using .get() ensures it doesn't crash if a cell is empty
+        # Extract data using the new column names
         coords = str(row.get('coordinates', ''))
-        link = str(row.get('link_url', '#'))
-        name = str(row.get('name', ''))
-        desc = str(row.get('description', ''))
-        img_preview = str(row.get('image_url', ''))
+        raw_link = str(row.get('link url', '#'))
         
-        # Escape quotes in strings to prevent HTML breakage
-        name = name.replace("'", "&#39;")
+        # Format Link: Ensure it starts with http/https
+        if raw_link and not raw_link.startswith(('http://', 'https://')):
+            link = 'https://' + raw_link
+        else:
+            link = raw_link
+
+        # Info for Tooltip
+        title = str(row.get('space', ''))
+        
+        # Build description from available data
+        capacity = row.get('capacity', '')
+        site_type = row.get('indoor/outdoor', '')
+        desc = f"Capacity: {capacity} | Type: {site_type}"
+        
+        # Image for Tooltip
+        actual_site_name = row.get('actual site', '')
+        popup_img_path = find_popup_image(actual_site_name)
+        
+        if popup_img_path:
+            img_b64 = get_base64_of_bin_file(popup_img_path)
+            popup_img_src = f"data:image/jpeg;base64,{img_b64}"
+        else:
+            # Fallback placeholder if image is missing
+            popup_img_src = "https://via.placeholder.com/300x200?text=No+Image"
+
+        # Escape quotes for HTML
+        title = title.replace("'", "&#39;")
         desc = desc.replace("'", "&#39;")
         
         polygons_html += f"""
         <a href="{link}" target="_blank">
             <polygon class="map-poly" points="{coords}" 
-                onmousemove="showTooltip(evt, '{name}', '{desc}', '{img_preview}')" 
+                onmousemove="showTooltip(evt, '{title}', '{desc}', '{popup_img_src}')" 
                 onmouseout="hideTooltip()">
             </polygon>
         </a>
@@ -107,6 +151,7 @@ def generate_interactive_map(image_path, csv_path):
         .map-container {{ position: relative; width: 100%; height: auto; }}
         .map-image {{ width: 100%; display: block; }}
         .map-svg {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; }}
+        
         .map-poly {{ fill: transparent; stroke: none; cursor: pointer; transition: all 0.3s ease; }}
         .map-poly:hover {{ fill: rgba(255, 215, 0, 0.4); stroke: rgba(255, 255, 255, 0.8); stroke-width: 2px; }}
         
@@ -118,15 +163,15 @@ def generate_interactive_map(image_path, csv_path):
             border: 1px solid #444;
             border-radius: 8px;
             padding: 15px;
-            font-family: sans-serif;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             pointer-events: none;
-            z-index: 1000;
-            width: 250px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            z-index: 9999;
+            width: 260px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
         }}
-        #tooltip img {{ width: 100%; height: 150px; object-fit: cover; border-radius: 4px; margin-bottom: 8px; }}
-        #tooltip h4 {{ margin: 0 0 5px 0; color: #ffbf00; }}
-        #tooltip p {{ margin: 0; font-size: 0.9em; color: #ddd; }}
+        #tooltip img {{ width: 100%; height: 160px; object-fit: cover; border-radius: 4px; margin-bottom: 10px; border: 1px solid #333; }}
+        #tooltip h4 {{ margin: 0 0 5px 0; color: #ffbf00; font-size: 18px; }}
+        #tooltip p {{ margin: 0; font-size: 14px; color: #ccc; line-height: 1.4; }}
     </style>
     </head>
     <body>
@@ -152,15 +197,20 @@ def generate_interactive_map(image_path, csv_path):
 
         function showTooltip(evt, name, desc, imgUrl) {{
             tooltip.style.display = "block";
-            ttName.innerText = name;
-            ttDesc.innerText = desc;
+            ttName.innerHTML = name;
+            ttDesc.innerHTML = desc;
             ttImg.src = imgUrl;
             
+            // Mouse position relative to viewport
             var x = evt.clientX;
             var y = evt.clientY;
             
-            if (x + 270 > window.innerWidth) {{ x = x - 270; }}
-            if (y + 300 > window.innerHeight) {{ y = y - 200; }}
+            // Prevent tooltip from going off-screen
+            var tooltipWidth = 280;
+            var tooltipHeight = 300;
+            
+            if (x + tooltipWidth > window.innerWidth) {{ x = x - tooltipWidth; }}
+            if (y + tooltipHeight > window.innerHeight) {{ y = y - tooltipHeight; }}
 
             tooltip.style.left = (x + 15) + "px";
             tooltip.style.top = (y + 15) + "px";
