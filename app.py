@@ -11,6 +11,11 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# --- 🔧 SETTINGS: ADJUST THIS TO REMOVE THE BLACK BOX ---
+# Since Wix shrinks the image width, we must shrink the height to match.
+# Try 700, 800, or 900 until the black box disappears.
+EMBED_HEIGHT = 800 
+
 # --- CSS TO REMOVE ALL BRANDING & BUTTONS ---
 hide_streamlit_style = """
             <style>
@@ -19,32 +24,35 @@ hide_streamlit_style = """
             .stFooter {display: none !important;}
             .viewerBadge_container__1QSob {display: none !important;}
             
-            /* 2. Remove the Top Toolbar (Hamburger menu, Settings, etc.) */
+            /* 2. Remove the Top Toolbar */
             [data-testid="stToolbar"] {display: none !important;}
             [data-testid="stHeader"] {display: none !important;}
             
-            /* 3. Remove the 'Decoration' (The colored bar at the top) */
+            /* 3. Remove the 'Decoration' */
             [data-testid="stDecoration"] {display: none !important;}
             
-            /* 4. Remove the Sidebar completely */
+            /* 4. Remove the Sidebar */
             [data-testid="stSidebar"] {display: none !important;}
             
-            /* 5. Remove Padding to ensure full-width/height in Wix */
+            /* 5. Remove Padding & Set Transparent Background */
             .block-container {
                 padding: 0 !important;
                 margin: 0 !important;
                 max-width: 100% !important;
             }
             div[data-testid="stAppViewContainer"] {
-                background-color: black;
+                background-color: transparent !important;
+            }
+            div[data-testid="stAppViewContainer"] > .main {
+                background-color: transparent !important;
             }
             
-            /* 6. Hide the 'View Fullscreen' button that appears on hover */
+            /* 6. Hide the 'View Fullscreen' button */
             button[title="View fullscreen"] {
                 display: none !important;
             }
             
-            /* 7. Hide scrollbars visually but allow scrolling if necessary */
+            /* 7. Hide scrollbars */
             ::-webkit-scrollbar {
                 width: 0px;
                 background: transparent;
@@ -73,33 +81,28 @@ def find_popup_image(image_name):
             return file_path
     return None
 
-# --- MAIN GENERATOR (NO CACHING, DYNAMIC HEIGHT) ---
+# --- MAIN GENERATOR ---
 def generate_interactive_map(image_path, csv_path):
-    # Default fallback height
-    img_height = 800 
-    
     # 1. Load Data
     try:
         df = pd.read_csv(csv_path)
         df.columns = df.columns.str.strip().str.lower()
     except FileNotFoundError:
-        return "<h3 style='color:white; text-align:center'>Error: spaces.csv not found.</h3>", img_height
+        return "<h3 style='color:white; text-align:center'>Error: spaces.csv not found.</h3>"
     except Exception as e:
-        return f"<h3 style='color:white; text-align:center'>Error reading CSV: {e}</h3>", img_height
+        return f"<h3 style='color:white; text-align:center'>Error reading CSV: {e}</h3>"
 
     # 2. Encode Background & Detect Size
     if os.path.exists(image_path):
-        # Open image just to read the size
         with Image.open(image_path) as img:
             img_width, img_height = img.size
         
-        # Encode for HTML
         bg_base64 = get_base64_of_bin_file(image_path)
         img_src = f"data:image/jpeg;base64,{bg_base64}"
     else:
-        return "<h3 style='color:white; text-align:center'>Error: Background image1.jpg not found.</h3>", img_height
+        return "<h3 style='color:white; text-align:center'>Error: Background image1.jpg not found.</h3>"
 
-    # 3. Generate SVG Polygons (Exact Sizing)
+    # 3. Generate SVG Polygons
     svg_width = img_width
     svg_height = img_height
 
@@ -141,12 +144,13 @@ def generate_interactive_map(image_path, csv_path):
         """
 
     # 4. Construct Final HTML
+    # Note: background-color is removed here to allow transparency
     html_code = f"""
     <!DOCTYPE html>
     <html>
     <head>
     <style>
-        body {{ margin: 0; padding: 0; background-color: #000; overflow: hidden; }}
+        body {{ margin: 0; padding: 0; background-color: transparent; overflow: hidden; }}
         .map-container {{ position: relative; width: 100%; max-width: 100%; height: auto; }}
         .map-image {{ width: 100%; height: auto; display: block; }}
         .map-svg {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; }}
@@ -219,15 +223,17 @@ def generate_interactive_map(image_path, csv_path):
     </body>
     </html>
     """
-    return html_code, img_height
+    return html_code
 
 # --- APP EXECUTION ---
 current_dir = os.getcwd()
 img_file = os.path.join(current_dir, "image1.jpg")
 csv_file = os.path.join(current_dir, "spaces.csv")
 
-# Generate the HTML & Capture Height
-html_content, map_height = generate_interactive_map(img_file, csv_file)
+# Generate the HTML
+html_content = generate_interactive_map(img_file, csv_file)
 
+# Use the manual height setting from the top of the file
+st.components.v1.html(html_content, height=EMBED_HEIGHT, scrolling=True)
 # Display with dynamic height based on the image
 st.components.v1.html(html_content, height=map_height, scrolling=True)
