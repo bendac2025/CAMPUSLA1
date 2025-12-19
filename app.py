@@ -123,7 +123,7 @@ def generate_interactive_map(image_path, csv_path):
         size_val = row.get('size', 'N/A')
         
         # Format Description: Stacked lines
-        desc = f"Type: {space_type}<br><br>Size: {size_val} sqft"
+        desc = f"<br>Type: {space_type}<br><br>Size: {size_val} sqft"
         
         actual_site_name = row.get('actual site', '')
         popup_img_path = find_popup_image(actual_site_name)
