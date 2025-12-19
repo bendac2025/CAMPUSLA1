@@ -1,12 +1,23 @@
-Space,Size,Capacity,Indoor/Outdoor,Coordinates,Image URL,Link URL,Actual Site
-LA 1,1,1000,Indoor,"870,716,658,667,602,674,488,704,488,745,736,823,740,772,821,728,821,728",,la.ourcampus.live/spaces/1,Ace 1
-LA 2,2,2000,Indoor,"738,825,738,774,823,726,875,718,1218,784,1220,840,1038,925",,la.ourcampus.live/spaces/2,Ace 2
-LA 3,3,3000,Outdoor,"472,731,299,764,3,1249,0,1303,366,1305,606,1181,606,1093,697,1044,700,1028,729,1013,743,1022,755,1020,767,1027,823,1049,1063,935,472,735",,la.ourcampus.live/spaces/3,Ace 3
-LA 4,4,4000,Indoor,"485,641,538,677,599,672,653,665,714,675,838,645,818,631,726,611",,la.ourcampus.live/spaces/4,Ace 4
-LA 5,5,5000,Indoor,"829,704,828,694,943,662,1109,694,1001,740",,la.ourcampus.live/spaces/5,Ace 5
-LA 6,6,6000,Outdoor,"1004,742,1109,696,1345,740,1343,793,1223,840,1228,782",,la.ourcampus.live/spaces/6,Ace 6
-LA 7,7,7000,Indoor,"768,616,838,643,1136,585,1174,587,1220,577,1055,577",,la.ourcampus.live/spaces/7,Ace 7
-LA 8,8,8000,Outdoor,"931,660,931,643,1021,621,1226,653,1245,657,1260,662,1274,665,1294,672,1313,677,1325,684,1338,694,1352,708,1357,738",,la.ourcampus.live/spaces/8,Ace 8
-LA 9,9,9000,Indoor,"1667,753,1630,793,1367,745,1360,714,1350,697,1330,684,1308,672,1264,657,1245,652,1209,648,1186,647,1240,631,1430,643,1401,657,1406,711",,la.ourcampus.live/spaces/9,Ace 9
-LA 10,10,10000,Indoor,"1077,606,1075,628,1169,643,1242,628,1240,601,1147,585",,la.ourcampus.live/spaces/10,Mission 1
-LA 11,11,11000,Indoor,"1413,708,1415,657,1445,643,1243,628,1245,606,1182,589,1314,560,1839,609,1837,643,1684,755",,la.ourcampus.live/spaces/11,Mission 2
+Space,Type,Size,Coordinates,Link URL,Actual Site
+LA 1,Offices,1000,"870,716,658,667,602,674,488,704,488,745,736,823,740,772,821,728,821,728",la.ourcampus.live/our-spaces/la1,Ace 1
+LA 2,Outdoor Lot,2000,"738,825,738,774,823,726,875,718,1218,784,1220,840,1038,925",la.ourcampus.live/our-spaces/la2,Lot A
+LA 3,Multi Purpose Indoor Space,3000,"472,731,299,764,3,1249,0,1303,366,1305,606,1181,606,1093,697,1044,700,1028,729,1013,743,1022,755,1020,767,1027,823,1049,1063,935,472,735",la.ourcampus.live/our-spaces/la3,Ace 2
+LA 4,Multi Purpose Indoor Space,4000,"485,641,538,677,599,672,653,665,714,675,838,645,818,631,726,611",la.ourcampus.live/our-spaces/la4,Ace 6
+LA 5,Rooftop Lot,5000,"829,704,828,694,943,662,1109,694,1001,740",la.ourcampus.live/our-spaces/la5,Lot D
+LA 6,Outdoor Lot,6000,"1004,742,1109,696,1345,740,1343,793,1223,840,1228,782",la.ourcampus.live/our-spaces/la6,Lot B
+LA 7,Multi Purpose Indoor Space,7000,"768,616,838,643,1136,585,1174,587,1220,577,1055,577",la.ourcampus.live/our-spaces/la7,Ace 3
+LA 8,Outdoor Lot,8000,"931,660,931,643,1021,621,1226,653,1245,657,1260,662,1274,665,1294,672,1313,677,1325,684,1338,694,1352,708,1357,738",la.ourcampus.live/our-spaces/la8,Lot C
+LA 9,Multi Purpose Indoor Space,9000,"1667,753,1630,793,1367,745,1360,714,1350,697,1330,684,1308,672,1264,657,1245,652,1209,648,1186,647,1240,631,1430,643,1401,657,1406,711",la.ourcampus.live/our-spaces/la9,Ace 4
+LA 10,Multi Purpose Indoor Space,10000,"1077,606,1075,628,1169,643,1242,628,1240,601,1147,585",la.ourcampus.live/our-spaces/la10,Ace 5
+LA 11,Outdoor Lot,11000,"1413,708,1415,657,1445,643,1243,628,1245,606,1182,589,1314,560,1839,609,1837,643,1684,755",la.ourcampus.live/our-spaces/la11,Lot F
+LA 12,Multi Purpose Indoor Space,12000,,la.ourcampus.live/our-spaces/la12,Ace 7
+LA 13,Outdoor Lot,13000,,la.ourcampus.live/our-spaces/la13,Lot G
+LA 14,Outdoor Lot,14000,,la.ourcampus.live/our-spaces/la14,Lot H
+LA 15,Multi Purpose Indoor Space,15000,,la.ourcampus.live/our-spaces/la15,524
+LA 16,Multi Purpose Indoor Space,16000,,la.ourcampus.live/our-spaces/la16,Mission 1
+LA 17,Multi Purpose Indoor Space,17000,,la.ourcampus.live/our-spaces/la17,Mission 2
+LA 18,Multi Purpose Indoor Space,18000,,la.ourcampus.live/our-spaces/la18,Mission 3
+LA 19,Offices,19000,,la.ourcampus.live/our-spaces/la19,550
+LA 20,Multi Purpose Indoor Space,20000,,la.ourcampus.live/our-spaces/la20,Mission 4
+LA 21,Outdoor Lot,21000,,la.ourcampus.live/our-spaces/la21,Lot M
+LA 22,Multi Purpose Indoor Space with connecting Outdoor Lot,22000,,la.ourcampus.live/our-spaces/la22,539
