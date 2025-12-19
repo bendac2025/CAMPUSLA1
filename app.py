@@ -43,6 +43,12 @@ hide_streamlit_style = """
             button[title="View fullscreen"] {
                 display: none !important;
             }
+            
+            /* 7. Hide scrollbars visually but allow scrolling if necessary */
+            ::-webkit-scrollbar {
+                width: 0px;
+                background: transparent;
+            }
             </style>
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
@@ -67,25 +73,31 @@ def find_popup_image(image_name):
             return file_path
     return None
 
+# --- MAIN GENERATOR (NO CACHING, DYNAMIC HEIGHT) ---
 def generate_interactive_map(image_path, csv_path):
+    # Default fallback height
+    img_height = 800 
+    
     # 1. Load Data
     try:
         df = pd.read_csv(csv_path)
         df.columns = df.columns.str.strip().str.lower()
     except FileNotFoundError:
-        return "<h3 style='color:white; text-align:center'>Error: spaces.csv not found.</h3>"
+        return "<h3 style='color:white; text-align:center'>Error: spaces.csv not found.</h3>", img_height
     except Exception as e:
-        return f"<h3 style='color:white; text-align:center'>Error reading CSV: {e}</h3>"
+        return f"<h3 style='color:white; text-align:center'>Error reading CSV: {e}</h3>", img_height
 
     # 2. Encode Background & Detect Size
     if os.path.exists(image_path):
+        # Open image just to read the size
         with Image.open(image_path) as img:
             img_width, img_height = img.size
         
+        # Encode for HTML
         bg_base64 = get_base64_of_bin_file(image_path)
         img_src = f"data:image/jpeg;base64,{bg_base64}"
     else:
-        return "<h3 style='color:white; text-align:center'>Error: Background image1.jpg not found.</h3>"
+        return "<h3 style='color:white; text-align:center'>Error: Background image1.jpg not found.</h3>", img_height
 
     # 3. Generate SVG Polygons (Exact Sizing)
     svg_width = img_width
@@ -207,15 +219,15 @@ def generate_interactive_map(image_path, csv_path):
     </body>
     </html>
     """
-    return html_code
+    return html_code, img_height
 
 # --- APP EXECUTION ---
 current_dir = os.getcwd()
 img_file = os.path.join(current_dir, "image1.jpg")
 csv_file = os.path.join(current_dir, "spaces.csv")
 
-# Generate the HTML
-html_content = generate_interactive_map(img_file, csv_file)
+# Generate the HTML & Capture Height
+html_content, map_height = generate_interactive_map(img_file, csv_file)
 
-# We use height=1200 as a safe default.
-st.components.v1.html(html_content, height=1200, scrolling=True)
+# Display with dynamic height based on the image
+st.components.v1.html(html_content, height=map_height, scrolling=True)
