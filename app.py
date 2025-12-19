@@ -14,13 +14,22 @@ st.set_page_config(
 # --- CSS TO REMOVE ALL BRANDING & BUTTONS ---
 hide_streamlit_style = """
             <style>
+            /* 1. Remove the 'Built with Streamlit' Footer */
             footer {visibility: hidden !important;}
             .stFooter {display: none !important;}
             .viewerBadge_container__1QSob {display: none !important;}
+            
+            /* 2. Remove the Top Toolbar (Hamburger menu, Settings, etc.) */
             [data-testid="stToolbar"] {display: none !important;}
             [data-testid="stHeader"] {display: none !important;}
+            
+            /* 3. Remove the 'Decoration' (The colored bar at the top) */
             [data-testid="stDecoration"] {display: none !important;}
+            
+            /* 4. Remove the Sidebar completely */
             [data-testid="stSidebar"] {display: none !important;}
+            
+            /* 5. Remove Padding to ensure full-width/height in Wix */
             .block-container {
                 padding: 0 !important;
                 margin: 0 !important;
@@ -29,6 +38,8 @@ hide_streamlit_style = """
             div[data-testid="stAppViewContainer"] {
                 background-color: black;
             }
+            
+            /* 6. Hide the 'View Fullscreen' button that appears on hover */
             button[title="View fullscreen"] {
                 display: none !important;
             }
@@ -56,9 +67,6 @@ def find_popup_image(image_name):
             return file_path
     return None
 
-# --- MAIN GENERATOR (WITH CACHING) ---
-# This decorator caches the result. It only re-runs if the file path changes.
-@st.cache_data(show_spinner=False) 
 def generate_interactive_map(image_path, csv_path):
     # 1. Load Data
     try:
@@ -79,7 +87,7 @@ def generate_interactive_map(image_path, csv_path):
     else:
         return "<h3 style='color:white; text-align:center'>Error: Background image1.jpg not found.</h3>"
 
-    # 3. Generate SVG Polygons
+    # 3. Generate SVG Polygons (Exact Sizing)
     svg_width = img_width
     svg_height = img_height
 
@@ -206,10 +214,8 @@ current_dir = os.getcwd()
 img_file = os.path.join(current_dir, "image1.jpg")
 csv_file = os.path.join(current_dir, "spaces.csv")
 
-# Generate the HTML (Now Cached)
+# Generate the HTML
 html_content = generate_interactive_map(img_file, csv_file)
 
-# Display
-st.components.v1.html(html_content, height=1200, scrolling=True)
 # We use height=1200 as a safe default.
 st.components.v1.html(html_content, height=1200, scrolling=True)
