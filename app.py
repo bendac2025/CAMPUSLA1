@@ -10,18 +10,45 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- CSS TO HIDE STREAMLIT UI ---
+# --- CSS TO REMOVE ALL STREAMLIT BRANDING ---
 hide_streamlit_style = """
             <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            header {visibility: hidden;}
-            .block-container {
-                padding: 0 !important;
-                margin: 0 !important;
+            /* 1. Hide the top header bar (the colored line & 'Stop' button) */
+            header[data-testid="stHeader"] {
+                display: none !important;
+                visibility: hidden;
             }
+
+            /* 2. Hide the Toolbar (the three dots and 'Deploy' button) */
+            [data-testid="stToolbar"] {
+                display: none !important;
+                visibility: hidden;
+            }
+
+            /* 3. Hide the Footer ('Made with Streamlit') */
+            footer {
+                display: none !important;
+                visibility: hidden;
+            }
+
+            /* 4. Remove all standard padding to make it truly full-screen */
+            .block-container {
+                padding-top: 0rem !important;
+                padding-bottom: 0rem !important;
+                padding-left: 0rem !important;
+                padding-right: 0rem !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+            }
+            
             div[data-testid="stAppViewContainer"] > .main {
-                padding: 0;
+                padding: 0 !important;
+            }
+            
+            /* 5. Hide the scrollbars if possible (optional, keeps it clean) */
+            ::-webkit-scrollbar {
+                width: 0px;
+                background: transparent;
             }
             </style>
             """
@@ -87,7 +114,7 @@ def generate_interactive_map(image_path, csv_path):
         return "<h3 style='color:white; text-align:center'>Error: Background image1.jpg not found.</h3>"
 
     # 3. Generate SVG Polygons
-    # UPDATED: Set to 1920x1305 to match the coordinate system of your CSV data.
+    # SVG Dimensions matched to the coordinate system (1920x1305)
     svg_width = 1920 
     svg_height = 1305
 
@@ -117,7 +144,6 @@ def generate_interactive_map(image_path, csv_path):
             img_b64 = get_base64_of_bin_file(popup_img_path)
             popup_img_src = f"data:image/jpeg;base64,{img_b64}"
         else:
-            # Fallback placeholder if image is missing
             popup_img_src = "https://via.placeholder.com/300x200?text=No+Image"
 
         # Safe strings for HTML
@@ -139,7 +165,7 @@ def generate_interactive_map(image_path, csv_path):
     <html>
     <head>
     <style>
-        body {{ margin: 0; padding: 0; background-color: #000; }}
+        body {{ margin: 0; padding: 0; background-color: #000; overflow-x: hidden; }}
         
         /* Container settings */
         .map-container {{ 
@@ -157,7 +183,7 @@ def generate_interactive_map(image_path, csv_path):
             display: block; 
         }}
         
-        /* SVG Overlay - Matches image size exactly */
+        /* SVG Overlay */
         .map-svg {{ 
             position: absolute; 
             top: 0; 
@@ -183,7 +209,7 @@ def generate_interactive_map(image_path, csv_path):
         /* Tooltip Styling */
         #tooltip {{
             display: none;
-            position: fixed; /* Fixed relative to the iframe window */
+            position: fixed; 
             background: rgba(15, 15, 15, 0.95);
             color: white;
             border: 1px solid #555;
@@ -227,18 +253,15 @@ def generate_interactive_map(image_path, csv_path):
             ttDesc.innerHTML = desc;
             ttImg.src = imgUrl;
             
-            // Get mouse position
             var x = evt.clientX;
             var y = evt.clientY;
             
-            // Adjust if tooltip goes off screen (Right/Bottom edges)
             var tooltipW = 260;
             var tooltipH = 250;
             
             if (x + tooltipW > window.innerWidth) {{ x = x - tooltipW; }}
             if (y + tooltipH > window.innerHeight) {{ y = y - tooltipH; }}
 
-            // Add offset so cursor doesn't cover it
             tooltip.style.left = (x + 15) + "px";
             tooltip.style.top = (y + 15) + "px";
         }}
@@ -260,5 +283,5 @@ csv_file = os.path.join(current_dir, "spaces.csv")
 # Generate the HTML
 html_content = generate_interactive_map(img_file, csv_file)
 
-# Display with scrolling enabled and large height
+# Display with scrolling enabled
 st.components.v1.html(html_content, height=1200, scrolling=True)
