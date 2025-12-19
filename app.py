@@ -11,23 +11,46 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- CSS TO REMOVE ALL STREAMLIT BRANDING ---
+# --- AGGRESSIVE CSS TO REMOVE UI ---
+# This hides the header, footer, padding, and forces the background to black
 hide_streamlit_style = """
             <style>
-            header[data-testid="stHeader"] { display: none !important; }
-            [data-testid="stToolbar"] { display: none !important; }
-            footer { display: none !important; }
+            /* 1. Hide Top Decoration Bar & Header */
+            header {visibility: hidden;}
+            div[data-testid="stDecoration"] {display: none;}
+            div[data-testid="stHeader"] {display: none;}
             
+            /* 2. Hide Toolbar (hamburger menu, deploy button) */
+            div[data-testid="stToolbar"] {display: none;}
+            div[data-testid="stStatusWidget"] {display: none;}
+            
+            /* 3. Hide Sidebar completely */
+            section[data-testid="stSidebar"] {display: none;}
+            
+            /* 4. Hide Footer */
+            footer {display: none;}
+            
+            /* 5. Eliminate all Padding & Margins */
             .block-container {
-                padding: 0 !important;
+                padding-top: 0rem !important;
+                padding-bottom: 0rem !important;
+                padding-left: 0rem !important;
+                padding-right: 0rem !important;
                 margin: 0 !important;
                 max-width: 100% !important;
+            }
+            
+            div[data-testid="stAppViewContainer"] {
+                padding: 0 !important;
+                margin: 0 !important;
+                background-color: black; /* Blends with the map */
             }
             
             div[data-testid="stAppViewContainer"] > .main {
                 padding: 0 !important;
             }
             
+            /* 6. Hide Scrollbars on the main window to prevent 'double scroll' */
             ::-webkit-scrollbar {
                 width: 0px;
                 background: transparent;
@@ -66,18 +89,17 @@ def generate_interactive_map(image_path, csv_path):
     except Exception as e:
         return f"<h3 style='color:white; text-align:center'>Error reading CSV: {e}</h3>"
 
-    # 2. Encode Background Image & DETECT SIZE
+    # 2. Encode Background & Detect Size
     if os.path.exists(image_path):
-        # Open image to get exact dimensions
         with Image.open(image_path) as img:
             img_width, img_height = img.size
-            
+        
         bg_base64 = get_base64_of_bin_file(image_path)
         img_src = f"data:image/jpeg;base64,{bg_base64}"
     else:
         return "<h3 style='color:white; text-align:center'>Error: Background image1.jpg not found.</h3>"
 
-    # 3. Generate SVG Polygons using Detected Dimensions
+    # 3. Generate SVG Polygons (Exact Sizing)
     svg_width = img_width
     svg_height = img_height
 
@@ -207,8 +229,6 @@ csv_file = os.path.join(current_dir, "spaces.csv")
 # Generate the HTML
 html_content = generate_interactive_map(img_file, csv_file)
 
-# Display with scrolling enabled
-st.components.v1.html(html_content, height=1200, scrolling=True)
-
-# Display with scrolling enabled
+# We set height=1200 as a safe default. 
+# If your image is very short, you can reduce this number (e.g., to 900) to remove black space at the bottom.
 st.components.v1.html(html_content, height=1200, scrolling=True)
