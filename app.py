@@ -144,7 +144,6 @@ def generate_interactive_map(image_path, csv_path):
         """
 
     # 4. Construct Final HTML
-    # Note: background-color is removed here to allow transparency
     html_code = f"""
     <!DOCTYPE html>
     <html>
@@ -235,5 +234,3 @@ html_content = generate_interactive_map(img_file, csv_file)
 
 # Use the manual height setting from the top of the file
 st.components.v1.html(html_content, height=EMBED_HEIGHT, scrolling=True)
-# Display with dynamic height based on the image
-st.components.v1.html(html_content, height=map_height, scrolling=True)
