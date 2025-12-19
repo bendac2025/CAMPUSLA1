@@ -123,7 +123,7 @@ def generate_interactive_map(image_path, csv_path):
         size_val = row.get('size', 'N/A')
         
         # Format Description: Stacked lines
-        desc = f"Type: {space_type}<br><br>Size: {size_val} sqft"
+        desc = f"Type: {space_type}<br>Size: {size_val} sqft"
         
         actual_site_name = row.get('actual site', '')
         popup_img_path = find_popup_image(actual_site_name)
@@ -248,6 +248,3 @@ html_content = generate_interactive_map(img_file, csv_file)
 
 # Use manual height + DISABLE SCROLLING
 st.components.v1.html(html_content, height=EMBED_HEIGHT, scrolling=False)
-
-# Use the manual height setting from the top of the file
-st.components.v1.html(html_content, height=EMBED_HEIGHT, scrolling=True)
