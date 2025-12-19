@@ -11,49 +11,37 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- AGGRESSIVE CSS TO REMOVE UI ---
-# This hides the header, footer, padding, and forces the background to black
+# --- CSS TO REMOVE ALL BRANDING & BUTTONS ---
 hide_streamlit_style = """
             <style>
-            /* 1. Hide Top Decoration Bar & Header */
-            header {visibility: hidden;}
-            div[data-testid="stDecoration"] {display: none;}
-            div[data-testid="stHeader"] {display: none;}
+            /* 1. Remove the 'Built with Streamlit' Footer */
+            footer {visibility: hidden !important;}
+            .stFooter {display: none !important;}
+            .viewerBadge_container__1QSob {display: none !important;}
             
-            /* 2. Hide Toolbar (hamburger menu, deploy button) */
-            div[data-testid="stToolbar"] {display: none;}
-            div[data-testid="stStatusWidget"] {display: none;}
+            /* 2. Remove the Top Toolbar (Hamburger menu, Settings, etc.) */
+            [data-testid="stToolbar"] {display: none !important;}
+            [data-testid="stHeader"] {display: none !important;}
             
-            /* 3. Hide Sidebar completely */
-            section[data-testid="stSidebar"] {display: none;}
+            /* 3. Remove the 'Decoration' (The colored bar at the top) */
+            [data-testid="stDecoration"] {display: none !important;}
             
-            /* 4. Hide Footer */
-            footer {display: none;}
+            /* 4. Remove the Sidebar completely */
+            [data-testid="stSidebar"] {display: none !important;}
             
-            /* 5. Eliminate all Padding & Margins */
+            /* 5. Remove Padding to ensure full-width/height in Wix */
             .block-container {
-                padding-top: 0rem !important;
-                padding-bottom: 0rem !important;
-                padding-left: 0rem !important;
-                padding-right: 0rem !important;
+                padding: 0 !important;
                 margin: 0 !important;
                 max-width: 100% !important;
             }
-            
             div[data-testid="stAppViewContainer"] {
-                padding: 0 !important;
-                margin: 0 !important;
-                background-color: black; /* Blends with the map */
+                background-color: black;
             }
             
-            div[data-testid="stAppViewContainer"] > .main {
-                padding: 0 !important;
-            }
-            
-            /* 6. Hide Scrollbars on the main window to prevent 'double scroll' */
-            ::-webkit-scrollbar {
-                width: 0px;
-                background: transparent;
+            /* 6. Hide the 'View Fullscreen' button that appears on hover */
+            button[title="View fullscreen"] {
+                display: none !important;
             }
             </style>
             """
@@ -146,8 +134,8 @@ def generate_interactive_map(image_path, csv_path):
     <html>
     <head>
     <style>
-        body {{ margin: 0; padding: 0; background-color: #000; overflow-x: hidden; }}
-        .map-container {{ position: relative; width: 100%; max-width: 100%; height: auto; overflow: hidden; }}
+        body {{ margin: 0; padding: 0; background-color: #000; overflow: hidden; }}
+        .map-container {{ position: relative; width: 100%; max-width: 100%; height: auto; }}
         .map-image {{ width: 100%; height: auto; display: block; }}
         .map-svg {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; }}
         .map-poly {{ fill: transparent; stroke: none; cursor: pointer; transition: all 0.2s ease; }}
@@ -229,6 +217,5 @@ csv_file = os.path.join(current_dir, "spaces.csv")
 # Generate the HTML
 html_content = generate_interactive_map(img_file, csv_file)
 
-# We set height=1200 as a safe default. 
-# If your image is very short, you can reduce this number (e.g., to 900) to remove black space at the bottom.
+# We use height=1200 as a safe default.
 st.components.v1.html(html_content, height=1200, scrolling=True)
