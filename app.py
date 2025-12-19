@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import base64
 import os
+from PIL import Image
 
 # --- PAGE CONFIGURATION ---
 st.set_page_config(
@@ -59,39 +60,26 @@ def generate_interactive_map(image_path, csv_path):
     # 1. Load Data
     try:
         df = pd.read_csv(csv_path)
-        # Clean columns: lowercase and remove spaces
         df.columns = df.columns.str.strip().str.lower()
     except FileNotFoundError:
         return "<h3 style='color:white; text-align:center'>Error: spaces.csv not found.</h3>"
     except Exception as e:
         return f"<h3 style='color:white; text-align:center'>Error reading CSV: {e}</h3>"
 
-    # --- CHECK COLUMNS ---
-    # Updated to look for 'type' and 'size'
-    required_cols = ['coordinates', 'link url', 'space', 'actual site', 'type', 'size']
-    missing_cols = [c for c in required_cols if c not in df.columns]
-    
-    # We make this a soft check (warning) rather than a hard crash
-    if missing_cols:
-        return f"""
-        <div style='background: darkred; color: white; padding: 20px;'>
-            <h3>CSV Column Error</h3>
-            <p>The code is looking for these new columns: <b>type, size</b></p>
-            <p>Your CSV is missing: <b>{missing_cols}</b></p>
-            <p>Please rename 'Capacity' to 'Type' and 'Indoor/Outdoor' to 'Size' in your CSV file.</p>
-        </div>
-        """
-
-    # 2. Encode Background Image
+    # 2. Encode Background Image & DETECT SIZE
     if os.path.exists(image_path):
+        # Open image to get exact dimensions
+        with Image.open(image_path) as img:
+            img_width, img_height = img.size
+            
         bg_base64 = get_base64_of_bin_file(image_path)
         img_src = f"data:image/jpeg;base64,{bg_base64}"
     else:
         return "<h3 style='color:white; text-align:center'>Error: Background image1.jpg not found.</h3>"
 
-    # 3. Generate SVG Polygons
-    svg_width = 1920 
-    svg_height = 1305
+    # 3. Generate SVG Polygons using Detected Dimensions
+    svg_width = img_width
+    svg_height = img_height
 
     polygons_html = ""
     
@@ -104,17 +92,11 @@ def generate_interactive_map(image_path, csv_path):
         else:
             link = raw_link
 
-        # --- NEW LOGIC HERE ---
         title = str(row.get('space', ''))
-        
-        # Get Type and Size
         space_type = row.get('type', 'N/A')
         size_val = row.get('size', 'N/A')
-        
-        # Build the description string with "sqft" automatically added
         desc = f"Type: {space_type} | Size: {size_val} sqft"
         
-        # Image for Tooltip
         actual_site_name = row.get('actual site', '')
         popup_img_path = find_popup_image(actual_site_name)
         
@@ -224,6 +206,9 @@ csv_file = os.path.join(current_dir, "spaces.csv")
 
 # Generate the HTML
 html_content = generate_interactive_map(img_file, csv_file)
+
+# Display with scrolling enabled
+st.components.v1.html(html_content, height=1200, scrolling=True)
 
 # Display with scrolling enabled
 st.components.v1.html(html_content, height=1200, scrolling=True)
