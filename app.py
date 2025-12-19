@@ -120,7 +120,9 @@ def generate_interactive_map(image_path, csv_path):
         title = str(row.get('space', ''))
         space_type = row.get('type', 'N/A')
         size_val = row.get('size', 'N/A')
-        desc = f"Type: {space_type} | Size: {size_val} sqft"
+        
+        # --- CHANGE 1: Separate Lines using <br> ---
+        desc = f"Type: {space_type}<br>Size: {size_val} sqft"
         
         actual_site_name = row.get('actual site', '')
         popup_img_path = find_popup_image(actual_site_name)
@@ -153,8 +155,21 @@ def generate_interactive_map(image_path, csv_path):
         .map-container {{ position: relative; width: 100%; max-width: 100%; height: auto; }}
         .map-image {{ width: 100%; height: auto; display: block; }}
         .map-svg {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; }}
-        .map-poly {{ fill: transparent; stroke: none; cursor: pointer; transition: all 0.2s ease; }}
-        .map-poly:hover {{ fill: rgba(255, 215, 0, 0.3); stroke: rgba(255, 255, 255, 0.6); stroke-width: 2px; }}
+        
+        /* Interaction Styling */
+        .map-poly {{ 
+            fill: transparent; 
+            stroke: none; 
+            cursor: pointer; 
+            transition: none; /* Removed transition */
+        }}
+        
+        /* --- CHANGE 2: Removed Hover Highlight --- */
+        /* Only cursor changes now */
+        .map-poly:hover {{ 
+            fill: transparent;
+            stroke: none;
+        }}
         
         #tooltip {{
             display: none;
@@ -172,7 +187,7 @@ def generate_interactive_map(image_path, csv_path):
         }}
         #tooltip img {{ width: 100%; height: 140px; object-fit: cover; border-radius: 4px; margin-bottom: 8px; background: #333; }}
         #tooltip h4 {{ margin: 0 0 4px 0; color: #ffbf00; font-size: 16px; font-weight: 600; }}
-        #tooltip p {{ margin: 0; font-size: 13px; color: #ddd; }}
+        #tooltip p {{ margin: 0; font-size: 13px; color: #ddd; line-height: 1.5; }} /* Added line-height for readability */
     </style>
     </head>
     <body>
@@ -231,6 +246,9 @@ csv_file = os.path.join(current_dir, "spaces.csv")
 
 # Generate the HTML
 html_content = generate_interactive_map(img_file, csv_file)
+
+# Use the manual height setting from the top of the file
+st.components.v1.html(html_content, height=EMBED_HEIGHT, scrolling=True)
 
 # Use the manual height setting from the top of the file
 st.components.v1.html(html_content, height=EMBED_HEIGHT, scrolling=True)
