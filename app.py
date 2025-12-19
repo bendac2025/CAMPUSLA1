@@ -14,7 +14,7 @@ st.set_page_config(
 # --- 🔧 SETTINGS: ADJUST THIS TO REMOVE THE BLACK BOX ---
 # Since Wix shrinks the image width, we must shrink the height to match.
 # Try 700, 800, or 900 until the black box disappears.
-EMBED_HEIGHT = 700 
+EMBED_HEIGHT = 680 
 
 # --- CSS TO REMOVE ALL BRANDING & BUTTONS ---
 hide_streamlit_style = """
