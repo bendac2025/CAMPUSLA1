@@ -14,7 +14,7 @@ st.set_page_config(
 # --- 🔧 SETTINGS: ADJUST THIS TO REMOVE THE BLACK BOX ---
 # Since Wix shrinks the image width, we must shrink the height to match.
 # Try 700, 800, or 900 until the black box disappears.
-EMBED_HEIGHT = 900 
+EMBED_HEIGHT = 800 
 
 # --- CSS TO REMOVE ALL BRANDING & BUTTONS ---
 hide_streamlit_style = """
@@ -42,6 +42,7 @@ hide_streamlit_style = """
             }
             div[data-testid="stAppViewContainer"] {
                 background-color: transparent !important;
+                overflow: hidden !important; /* Force hidden overflow */
             }
             div[data-testid="stAppViewContainer"] > .main {
                 background-color: transparent !important;
@@ -52,7 +53,7 @@ hide_streamlit_style = """
                 display: none !important;
             }
             
-            /* 7. Hide scrollbars */
+            /* 7. Hide scrollbars completely */
             ::-webkit-scrollbar {
                 width: 0px;
                 background: transparent;
@@ -121,8 +122,8 @@ def generate_interactive_map(image_path, csv_path):
         space_type = row.get('type', 'N/A')
         size_val = row.get('size', 'N/A')
         
-        # --- CHANGE 1: Separate Lines using <br> ---
-        desc = f"Type: {space_type}<br>Size: {size_val} sqft"
+        # Format Description: Stacked lines
+        desc = f"Type: {space_type}<br><br>Size: {size_val} sqft"
         
         actual_site_name = row.get('actual site', '')
         popup_img_path = find_popup_image(actual_site_name)
@@ -161,11 +162,9 @@ def generate_interactive_map(image_path, csv_path):
             fill: transparent; 
             stroke: none; 
             cursor: pointer; 
-            transition: none; /* Removed transition */
         }}
         
-        /* --- CHANGE 2: Removed Hover Highlight --- */
-        /* Only cursor changes now */
+        /* No Highlight on Hover */
         .map-poly:hover {{ 
             fill: transparent;
             stroke: none;
@@ -187,7 +186,7 @@ def generate_interactive_map(image_path, csv_path):
         }}
         #tooltip img {{ width: 100%; height: 140px; object-fit: cover; border-radius: 4px; margin-bottom: 8px; background: #333; }}
         #tooltip h4 {{ margin: 0 0 4px 0; color: #ffbf00; font-size: 16px; font-weight: 600; }}
-        #tooltip p {{ margin: 0; font-size: 13px; color: #ddd; line-height: 1.5; }} /* Added line-height for readability */
+        #tooltip p {{ margin: 0; font-size: 13px; color: #ddd; line-height: 1.5; }}
     </style>
     </head>
     <body>
@@ -247,8 +246,8 @@ csv_file = os.path.join(current_dir, "spaces.csv")
 # Generate the HTML
 html_content = generate_interactive_map(img_file, csv_file)
 
-# Use the manual height setting from the top of the file
-st.components.v1.html(html_content, height=EMBED_HEIGHT, scrolling=True)
+# Use manual height + DISABLE SCROLLING
+st.components.v1.html(html_content, height=EMBED_HEIGHT, scrolling=False)
 
 # Use the manual height setting from the top of the file
 st.components.v1.html(html_content, height=EMBED_HEIGHT, scrolling=True)
