@@ -97,7 +97,7 @@ def generate_interactive_map(image_path, csv_path):
     if os.path.exists(image_path):
         with Image.open(image_path) as img:
             img_width, img_height = img.size
-        
+
         bg_base64 = get_base64_of_bin_file(image_path)
         img_src = f"data:image/jpeg;base64,{bg_base64}"
     else:
@@ -108,11 +108,11 @@ def generate_interactive_map(image_path, csv_path):
     svg_height = img_height
 
     polygons_html = ""
-    
+
     for index, row in df.iterrows():
         coords = str(row.get('coordinates', ''))
         raw_link = str(row.get('link url', '#'))
-        
+
         if raw_link and not raw_link.startswith(('http://', 'https://')):
             link = 'https://' + raw_link
         else:
@@ -121,13 +121,14 @@ def generate_interactive_map(image_path, csv_path):
         title = str(row.get('space', ''))
         space_type = row.get('type', 'N/A')
         size_val = row.get('size', 'N/A')
-        
+
         # Format Description: Stacked lines
+        desc = f"Type: {space_type}<br><br>Size: {size_val} sqft"
         desc = f"<br>Type: {space_type}<br><br>Size: {size_val} sqft"
-        
+
         actual_site_name = row.get('actual site', '')
         popup_img_path = find_popup_image(actual_site_name)
-        
+
         if popup_img_path:
             img_b64 = get_base64_of_bin_file(popup_img_path)
             popup_img_src = f"data:image/jpeg;base64,{img_b64}"
@@ -136,15 +137,14 @@ def generate_interactive_map(image_path, csv_path):
 
         title = title.replace("'", "&#39;")
         desc = desc.replace("'", "&#39;")
-        
-     # --- FIX: USE JAVASCRIPT ONCLICK INSTEAD OF <A> TAG ---
-        # We use window.open(link, '_top') to force same-window navigation
+
         polygons_html += f"""
-        <polygon class="map-poly" points="{coords}" 
-            onclick="window.open('{link}', '_top')"
-            onmousemove="showTooltip(evt, '{title}', '{desc}', '{popup_img_src}')" 
-            onmouseout="hideTooltip()">
-        </polygon>
+        <a href="{link}" target="_blank">
+            <polygon class="map-poly" points="{coords}" 
+                onmousemove="showTooltip(evt, '{title}', '{desc}', '{popup_img_src}')" 
+                onmouseout="hideTooltip()">
+            </polygon>
+        </a>
         """
 
     # 4. Construct Final HTML
