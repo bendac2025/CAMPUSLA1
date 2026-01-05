@@ -125,7 +125,7 @@ def generate_interactive_map(image_path, csv_path):
         # --- RETURNED TO <A> TAG WITH NEW TAB TARGET ---
         # target="_blank" is the only reliable way for embedded iframes.
         polygons_html += f"""
-        <a href="{link}" target="_top" style="text-decoration: none;">
+        <a href="{link}" target="_blank" style="text-decoration: none;">
             <polygon class="map-poly" points="{coords}" 
                 onmousemove="showTooltip(evt, '{title}', '{desc}', '{popup_img_src}')" 
                 onmouseout="hideTooltip()">
