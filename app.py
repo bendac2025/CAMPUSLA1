@@ -137,13 +137,14 @@ def generate_interactive_map(image_path, csv_path):
         title = title.replace("'", "&#39;")
         desc = desc.replace("'", "&#39;")
         
+     # --- FIX: USE JAVASCRIPT ONCLICK INSTEAD OF <A> TAG ---
+        # We use window.open(link, '_top') to force same-window navigation
         polygons_html += f"""
-        <a href="{link}" target="_blank">
-            <polygon class="map-poly" points="{coords}" 
-                onmousemove="showTooltip(evt, '{title}', '{desc}', '{popup_img_src}')" 
-                onmouseout="hideTooltip()">
-            </polygon>
-        </a>
+        <polygon class="map-poly" points="{coords}" 
+            onclick="window.open('{link}', '_top')"
+            onmousemove="showTooltip(evt, '{title}', '{desc}', '{popup_img_src}')" 
+            onmouseout="hideTooltip()">
+        </polygon>
         """
 
     # 4. Construct Final HTML
