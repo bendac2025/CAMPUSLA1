@@ -122,11 +122,10 @@ def generate_interactive_map(image_path, csv_path):
         title = title.replace("'", "&#39;")
         desc = desc.replace("'", "&#39;")
         
-        # --- RESTORED: <A> TAG (Reliable Clicking) ---
-        # target="_top" attempts to open in the same window.
-        # If it still opens in a new tab, it is enforced by Wix/Browser security.
+        # --- RETURNED TO <A> TAG WITH NEW TAB TARGET ---
+        # target="_blank" is the only reliable way for embedded iframes.
         polygons_html += f"""
-        <a href="{link}" target="_top">
+        <a href="{link}" target="_blank" style="text-decoration: none;">
             <polygon class="map-poly" points="{coords}" 
                 onmousemove="showTooltip(evt, '{title}', '{desc}', '{popup_img_src}')" 
                 onmouseout="hideTooltip()">
@@ -147,14 +146,15 @@ def generate_interactive_map(image_path, csv_path):
         
         /* Interaction Styling */
         .map-poly {{ 
-            fill: transparent; 
+            /* We use a tiny bit of opacity to guarantee the browser registers the click area */
+            fill: rgba(255, 255, 255, 0.01); 
             stroke: none; 
             cursor: pointer; 
         }}
         
         /* No Highlight on Hover */
         .map-poly:hover {{ 
-            fill: transparent;
+            fill: rgba(255, 255, 255, 0.01);
             stroke: none;
         }}
         
