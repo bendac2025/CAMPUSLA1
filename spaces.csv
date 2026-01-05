@@ -1,23 +1,24 @@
 Space,Type,Size,Coordinates,Link URL,Actual Site
-LA 1,Offices,"24,975","770,154,765,258,874,263,874,154",la.ourcampus.live/our-spaces/la1,Ace 1
-LA 2,Outdoor Lot,"5,382","765,265,879,270,879,384,765,384",la.ourcampus.live/our-spaces/la2,Lot A
-LA 3,Multi Purpose Indoor Space,"33,703","879,156,879,384,1088,384,1084,156",la.ourcampus.live/our-spaces/la3,Ace 2
-LA 4,Multi Purpose Indoor Space,"48,931","1083,156,1083,384,1179,388,1179,352,1129,347,1129,202,1425,197,1425,343,1211,352,1211,384,1320,384,1466,379,1470,151",la.ourcampus.live/our-spaces/la4,Ace 6
-LA 5,Rooftop Lot,"46,823","1138,206,1421,206,1425,345,1138,345",la.ourcampus.live/our-spaces/la5,Lot D
-LA 6,Outdoor Lot,"12,701","770,393,892,393,897,561,770,561",la.ourcampus.live/our-spaces/la6,Lot B
-LA 7,Multi Purpose Indoor Space,"21,149","902,388,1093,388,1088,557,902,557",la.ourcampus.live/our-spaces/la7,Ace 3
-LA 8,Outdoor Lot,"12,701","770,566,892,566,892,744,770,725",la.ourcampus.live/our-spaces/la8,Lot C
-LA 9,Multi Purpose Indoor Space,"27,484","902,561,1084,561,1088,744,902,744",la.ourcampus.live/our-spaces/la9,Ace 4
-LA 10,Multi Purpose Indoor Space,"26,619","1097,388,1184,388,1330,388,1325,416,1220,420,1220,771,1116,771,1116,748,1084,744",la.ourcampus.live/our-spaces/la10,Ace 5
-LA 11,Outdoor Lot,"61,085","1384,814,1453,814,1457,575,1466,520,1484,484,1507,448,1530,420,1557,393,1585,375,1612,361,1607,156,1475,151,1480,379,1334,393,1334,425,1229,425,1229,684,1380,689",la.ourcampus.live/our-spaces/la11,Lot F
-LA 12,Multi Purpose Indoor Space,"16,901","1225,693,1380,684,1380,816,1229,816",la.ourcampus.live/our-spaces/la12,Ace 7
-LA 13,Outdoor Lot,"24,541","756,821,933,853,938,894,956,935,965,967,984,994,1006,1021,1052,1062,724,1012",la.ourcampus.live/our-spaces/la13,Lot G
-LA 14,Outdoor Lot,"55,669","943,853,952,898,961,930,970,958,984,980,997,999,1015,1026,1061,1062,1457,1122,1425,1081,1402,1040,1380,990,1361,939,1366,917",la.ourcampus.live/our-spaces/la14,Lot H
-LA 15,Multi Purpose Indoor Space,"30,475","1612,366,1612,443,1594,448,1594,857,1457,857,1457,570,1466,530,1498,470,1539,416",la.ourcampus.live/our-spaces/la15,524
-LA 16,Multi Purpose Indoor Space,"20,408","1703,338,1853,338,1849,557,1703,557",la.ourcampus.live/our-spaces/la16,Mission 1
-LA 17,Multi Purpose Indoor Space,"15,936","1703,564,1853,564,1853,741,1698,746",la.ourcampus.live/our-spaces/la17,Mission 2
-LA 18,Multi Purpose Indoor Space,"31,428","1858,366,1858,593,1890,593,1894,639,1917,616,2058,621,2058,366",la.ourcampus.live/our-spaces/la18,Mission 3
-LA 19,Offices,"19,475","1726,748,1853,746,1853,871,1726,871",la.ourcampus.live/our-spaces/la19,550
-LA 20,Multi Purpose Indoor Space,"31,919","1899,646,1922,648,1922,618,2058,623,2063,923,1894,923",la.ourcampus.live/our-spaces/la20,Mission 4
-LA 21,Outdoor Lot,"109,207","2145,288,2714,284,2213,985,2145,971",la.ourcampus.live/our-spaces/la21,Lot M
-LA 22,Multi Purpose Indoor Space with connecting Outdoor Lot,"29,729","1890,996,1384,914,1384,974,1398,1019,1425,1056,1448,1092,1489,1133,2081,1224,1985,1174",la.ourcampus.live/our-spaces/la22,539
+LA 1,Offices,"24,975","770,154,765,258,874,263,874,154",losangeles.ourcampus.live/our-spaces/la-1,Ace 1
+LA 2,Outdoor Lot,"5,382","765,265,879,270,879,384,765,384",losangeles.ourcampus.live/our-spaces/la-2,Lot A
+LA 3,Multi Purpose Indoor Space,"33,703","879,156,879,384,1088,384,1084,156",losangeles.ourcampus.live/our-spaces/la-3,Ace 2
+LA 4,Multi Purpose Indoor Space,"48,931","1083,156,1083,384,1179,388,1179,352,1129,347,1129,202,1425,197,1425,343,1211,352,1211,384,1320,384,1466,379,1470,151",losangeles.ourcampus.live/our-spaces/la-4,Ace 6
+LA 5,Rooftop Lot,"46,823","1138,206,1421,206,1425,345,1138,345",losangeles.ourcampus.live/our-spaces/la-5,Lot D
+LA 6,Outdoor Lot,"12,701","770,393,892,393,897,561,770,561",losangeles.ourcampus.live/our-spaces/la-6,Lot B
+LA 7,Multi Purpose Indoor Space,"21,149","902,388,1093,388,1088,557,902,557",losangeles.ourcampus.live/our-spaces/la-7,Ace 3
+LA 8,Outdoor Lot,"12,701","770,566,892,566,892,744,770,725",losangeles.ourcampus.live/our-spaces/la-8,Lot C
+LA 9,Multi Purpose Indoor Space,"27,484","902,561,1084,561,1088,744,902,744",losangeles.ourcampus.live/our-spaces/la-9,Ace 4
+LA 10,Multi Purpose Indoor Space,"26,619","1097,388,1184,388,1330,388,1325,416,1220,420,1220,771,1116,771,1116,748,1084,744",losangeles.ourcampus.live/our-spaces/la-10,Ace 5
+LA 11,Outdoor Lot,"61,085","1384,814,1453,814,1457,575,1466,520,1484,484,1507,448,1530,420,1557,393,1585,375,1612,361,1607,156,1475,151,1480,379,1334,393,1334,425,1229,425,1229,684,1380,689",losangeles.ourcampus.live/our-spaces/la-11,Lot F
+LA 12,Multi Purpose Indoor Space,"16,901","1225,693,1380,684,1380,816,1229,816",losangeles.ourcampus.live/our-spaces/la-12,Ace 7
+LA 13,Outdoor Lot,"24,541","756,821,933,853,938,894,956,935,965,967,984,994,1006,1021,1052,1062,724,1012",losangeles.ourcampus.live/our-spaces/la-13,Lot G
+LA 14,Outdoor Lot,"55,669","943,853,952,898,961,930,970,958,984,980,997,999,1015,1026,1061,1062,1457,1122,1425,1081,1402,1040,1380,990,1361,939,1366,917",losangeles.ourcampus.live/our-spaces/la-14,Lot H
+LA 15,Multi Purpose Indoor Space,"30,475","1612,366,1612,443,1594,448,1594,857,1457,857,1457,570,1466,530,1498,470,1539,416",losangeles.ourcampus.live/our-spaces/la-15,524
+LA 16,Multi Purpose Indoor Space,"20,408","1703,338,1853,338,1849,557,1703,557",losangeles.ourcampus.live/our-spaces/la-16,Mission 1
+LA 17,Multi Purpose Indoor Space,"15,936","1703,564,1853,564,1853,741,1698,746",losangeles.ourcampus.live/our-spaces/la-17,Mission 2
+LA 18,Multi Purpose Indoor Space,"31,428","1858,366,1858,593,1890,593,1894,639,1917,616,2058,621,2058,366",losangeles.ourcampus.live/our-spaces/la-18,Mission 3
+LA 19,Offices,"19,475","1726,748,1853,746,1853,871,1726,871",losangeles.ourcampus.live/our-spaces/la-19,550
+LA 20,Multi Purpose Indoor Space,"31,919","1899,646,1922,648,1922,618,2058,623,2063,923,1894,923",losangeles.ourcampus.live/our-spaces/la-20,Mission 4
+LA 21,Outdoor Lot,"109,207","2145,288,2714,284,2213,985,2145,971",losangeles.ourcampus.live/our-spaces/la-21,Lot M
+LA 22,Multi Purpose Indoor Space with connecting Outdoor Lot,"29,729","1890,996,1384,914,1384,974,1398,1019,1425,1056,1448,1092,1489,1133,2081,1224,1985,1174",losangeles.ourcampus.live/our-spaces/la-22,539
+
