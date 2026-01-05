@@ -14,16 +14,25 @@ st.set_page_config(
 # --- 🔧 SETTINGS ---
 EMBED_HEIGHT = 680
 
-# --- CSS TO REMOVE ALL BRANDING & BUTTONS ---
+# --- CSS TO REMOVE ALL BRANDING, BUTTONS & FOOTERS ---
 hide_streamlit_style = """
             <style>
+            /* 1. Hide the Streamlit Footer & 'Built with Streamlit' */
             footer {visibility: hidden !important;}
             .stFooter {display: none !important;}
-            .viewerBadge_container__1QSob {display: none !important;}
+            div[class*="viewerBadge"] {display: none !important;} /* Wildcard to catch the badge */
+            
+            /* 2. Hide the Top Toolbar (Hamburger menu, Deploy button) */
             [data-testid="stToolbar"] {display: none !important;}
             [data-testid="stHeader"] {display: none !important;}
+            
+            /* 3. Hide the Colored 'Decoration' Bar at the top */
             [data-testid="stDecoration"] {display: none !important;}
+            
+            /* 4. Hide the Sidebar completely */
             [data-testid="stSidebar"] {display: none !important;}
+            
+            /* 5. Remove Padding & Set Transparent Background */
             .block-container {
                 padding: 0 !important;
                 margin: 0 !important;
@@ -36,9 +45,12 @@ hide_streamlit_style = """
             div[data-testid="stAppViewContainer"] > .main {
                 background-color: transparent !important;
             }
-            button[title="View fullscreen"] {
-                display: none !important;
-            }
+            
+            /* 6. AGGRESSIVELY Hide 'View Fullscreen' buttons */
+            button[title="View fullscreen"] {display: none !important;}
+            [data-testid="stElementToolbar"] {display: none !important;}
+            
+            /* 7. Hide scrollbars completely */
             ::-webkit-scrollbar {
                 width: 0px;
                 background: transparent;
@@ -122,8 +134,7 @@ def generate_interactive_map(image_path, csv_path):
         title = title.replace("'", "&#39;")
         desc = desc.replace("'", "&#39;")
         
-        # --- RETURNED TO <A> TAG WITH NEW TAB TARGET ---
-        # target="_blank" is the only reliable way for embedded iframes.
+        # Link set to '_blank' (New Tab) to ensure it works in Wix
         polygons_html += f"""
         <a href="{link}" target="_blank" style="text-decoration: none;">
             <polygon class="map-poly" points="{coords}" 
@@ -146,13 +157,11 @@ def generate_interactive_map(image_path, csv_path):
         
         /* Interaction Styling */
         .map-poly {{ 
-            /* We use a tiny bit of opacity to guarantee the browser registers the click area */
-            fill: rgba(255, 255, 255, 0.01); 
+            fill: rgba(255, 255, 255, 0.01); /* Micro-opacity for click detection */
             stroke: none; 
             cursor: pointer; 
         }}
         
-        /* No Highlight on Hover */
         .map-poly:hover {{ 
             fill: rgba(255, 255, 255, 0.01);
             stroke: none;
