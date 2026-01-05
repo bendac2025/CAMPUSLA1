@@ -11,30 +11,19 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- 🔧 SETTINGS: ADJUST THIS TO REMOVE THE BLACK BOX ---
-# Since Wix shrinks the image width, we must shrink the height to match.
-# Try 700, 800, or 900 until the black box disappears.
-EMBED_HEIGHT = 680 
+# --- 🔧 SETTINGS ---
+EMBED_HEIGHT = 680
 
 # --- CSS TO REMOVE ALL BRANDING & BUTTONS ---
 hide_streamlit_style = """
             <style>
-            /* 1. Remove the 'Built with Streamlit' Footer */
             footer {visibility: hidden !important;}
             .stFooter {display: none !important;}
             .viewerBadge_container__1QSob {display: none !important;}
-            
-            /* 2. Remove the Top Toolbar */
             [data-testid="stToolbar"] {display: none !important;}
             [data-testid="stHeader"] {display: none !important;}
-            
-            /* 3. Remove the 'Decoration' */
             [data-testid="stDecoration"] {display: none !important;}
-            
-            /* 4. Remove the Sidebar */
             [data-testid="stSidebar"] {display: none !important;}
-            
-            /* 5. Remove Padding & Set Transparent Background */
             .block-container {
                 padding: 0 !important;
                 margin: 0 !important;
@@ -42,18 +31,14 @@ hide_streamlit_style = """
             }
             div[data-testid="stAppViewContainer"] {
                 background-color: transparent !important;
-                overflow: hidden !important; /* Force hidden overflow */
+                overflow: hidden !important; 
             }
             div[data-testid="stAppViewContainer"] > .main {
                 background-color: transparent !important;
             }
-            
-            /* 6. Hide the 'View Fullscreen' button */
             button[title="View fullscreen"] {
                 display: none !important;
             }
-            
-            /* 7. Hide scrollbars completely */
             ::-webkit-scrollbar {
                 width: 0px;
                 background: transparent;
@@ -97,7 +82,7 @@ def generate_interactive_map(image_path, csv_path):
     if os.path.exists(image_path):
         with Image.open(image_path) as img:
             img_width, img_height = img.size
-
+        
         bg_base64 = get_base64_of_bin_file(image_path)
         img_src = f"data:image/jpeg;base64,{bg_base64}"
     else:
@@ -108,11 +93,11 @@ def generate_interactive_map(image_path, csv_path):
     svg_height = img_height
 
     polygons_html = ""
-
+    
     for index, row in df.iterrows():
         coords = str(row.get('coordinates', ''))
         raw_link = str(row.get('link url', '#'))
-
+        
         if raw_link and not raw_link.startswith(('http://', 'https://')):
             link = 'https://' + raw_link
         else:
@@ -121,14 +106,13 @@ def generate_interactive_map(image_path, csv_path):
         title = str(row.get('space', ''))
         space_type = row.get('type', 'N/A')
         size_val = row.get('size', 'N/A')
-
+        
         # Format Description: Stacked lines
-        desc = f"Type: {space_type}<br><br>Size: {size_val} sqft"
-        desc = f"<br>Type: {space_type}<br><br>Size: {size_val} sqft"
-
+        desc = f"Type: {space_type}<br>Size: {size_val} sqft"
+        
         actual_site_name = row.get('actual site', '')
         popup_img_path = find_popup_image(actual_site_name)
-
+        
         if popup_img_path:
             img_b64 = get_base64_of_bin_file(popup_img_path)
             popup_img_src = f"data:image/jpeg;base64,{img_b64}"
@@ -137,15 +121,17 @@ def generate_interactive_map(image_path, csv_path):
 
         title = title.replace("'", "&#39;")
         desc = desc.replace("'", "&#39;")
-
-       # --- FIX: USE JAVASCRIPT ONCLICK INSTEAD OF <A> TAG ---
-        # We use window.open(link, '_top') to force same-window navigation
+        
+        # --- RESTORED: <A> TAG (Reliable Clicking) ---
+        # target="_top" attempts to open in the same window.
+        # If it still opens in a new tab, it is enforced by Wix/Browser security.
         polygons_html += f"""
-        <polygon class="map-poly" points="{coords}" 
-            onclick="window.open('{link}', '_top')"
-            onmousemove="showTooltip(evt, '{title}', '{desc}', '{popup_img_src}')" 
-            onmouseout="hideTooltip()">
-        </polygon>
+        <a href="{link}" target="_top">
+            <polygon class="map-poly" points="{coords}" 
+                onmousemove="showTooltip(evt, '{title}', '{desc}', '{popup_img_src}')" 
+                onmouseout="hideTooltip()">
+            </polygon>
+        </a>
         """
 
     # 4. Construct Final HTML
