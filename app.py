@@ -138,7 +138,7 @@ def generate_interactive_map(image_path, csv_path):
         desc = desc.replace("'", "&#39;")
         
         polygons_html += f"""
-        <a href="{link}" target="_blank">
+        <a href="{link}" target="_top">
             <polygon class="map-poly" points="{coords}" 
                 onmousemove="showTooltip(evt, '{title}', '{desc}', '{popup_img_src}')" 
                 onmouseout="hideTooltip()">
