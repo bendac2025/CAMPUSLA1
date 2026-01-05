@@ -20,13 +20,13 @@ hide_streamlit_style = """
             /* 1. Hide the Streamlit Footer & 'Built with Streamlit' */
             footer {visibility: hidden !important;}
             .stFooter {display: none !important;}
-            div[class*="viewerBadge"] {display: none !important;} /* Wildcard to catch the badge */
+            div[class*="viewerBadge"] {display: none !important;} 
             
-            /* 2. Hide the Top Toolbar (Hamburger menu, Deploy button) */
+            /* 2. Hide the Top Toolbar */
             [data-testid="stToolbar"] {display: none !important;}
             [data-testid="stHeader"] {display: none !important;}
             
-            /* 3. Hide the Colored 'Decoration' Bar at the top */
+            /* 3. Hide the Colored 'Decoration' Bar */
             [data-testid="stDecoration"] {display: none !important;}
             
             /* 4. Hide the Sidebar completely */
@@ -134,7 +134,7 @@ def generate_interactive_map(image_path, csv_path):
         title = title.replace("'", "&#39;")
         desc = desc.replace("'", "&#39;")
         
-        # Link set to '_blank' (New Tab) to ensure it works in Wix
+        # Link set to '_blank' (New Tab)
         polygons_html += f"""
         <a href="{link}" target="_blank" style="text-decoration: none;">
             <polygon class="map-poly" points="{coords}" 
@@ -157,7 +157,7 @@ def generate_interactive_map(image_path, csv_path):
         
         /* Interaction Styling */
         .map-poly {{ 
-            fill: rgba(255, 255, 255, 0.01); /* Micro-opacity for click detection */
+            fill: rgba(255, 255, 255, 0.01); 
             stroke: none; 
             cursor: pointer; 
         }}
@@ -243,9 +243,8 @@ csv_file = os.path.join(current_dir, "spaces.csv")
 # --- SPINNER LOGIC ADDED HERE ---
 # This ensures the user sees "Loading..." while the images are processing
 with st.spinner("Loading Map..."):
+    # Generate the HTML
+    html_content = generate_interactive_map(img_file, csv_file)
 
-# Generate the HTML
-html_content = generate_interactive_map(img_file, csv_file)
-
-# Use manual height + DISABLE SCROLLING
-st.components.v1.html(html_content, height=EMBED_HEIGHT, scrolling=False)
+    # Use manual height + DISABLE SCROLLING
+    st.components.v1.html(html_content, height=EMBED_HEIGHT, scrolling=False)
