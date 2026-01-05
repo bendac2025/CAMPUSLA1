@@ -240,6 +240,10 @@ current_dir = os.getcwd()
 img_file = os.path.join(current_dir, "image1.jpg")
 csv_file = os.path.join(current_dir, "spaces.csv")
 
+# --- SPINNER LOGIC ADDED HERE ---
+# This ensures the user sees "Loading..." while the images are processing
+with st.spinner("Loading Map..."):
+
 # Generate the HTML
 html_content = generate_interactive_map(img_file, csv_file)
 
